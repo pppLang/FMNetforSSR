@@ -1,5 +1,7 @@
 import os
 import torch
+from torch import nn
+import torch.functional as F
 import numpy as np 
 
 

@@ -20,6 +20,8 @@ class HyperDataset(udata.Dataset):
             self.h5f = h5py.File('/data0/langzhiqiang/data/test_final_realworld.h5', 'r')
 
         self.keys = list(self.h5f.keys())
+        if 'test' in self.mode:
+            print(self.keys)
         if 'train' in self.mode:
             random.shuffle(self.keys)
         else:
@@ -35,7 +37,7 @@ class HyperDataset(udata.Dataset):
         return data[0:31,:,:], data[31:34,:,:], data[34:65,:,:]
 
     def get_data_by_key(self, key):
-        assert self.mode == 'train'
+        assert self.mode == 'test'
         data = np.array(self.h5f[key])
         data = torch.Tensor(data)
         return data[0:31,:,:], data[31:34,:,:], data[34:65,:,:]

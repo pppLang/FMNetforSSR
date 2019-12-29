@@ -4,7 +4,7 @@ from math import sqrt
 
 
 class Conv_ReLU_Block(nn.Module): 
-    def __init__(self, nFeat=num_features, ksize=3): 
+    def __init__(self, nFeat=64, ksize=3): 
         super(Conv_ReLU_Block, self).__init__()
         self.conv = nn.Conv2d(in_channels=nFeat, out_channels=nFeat, kernel_size=ksize, stride=1, padding=int((ksize - 1) / 2), bias=False)
         self.relu = nn.ReLU(inplace=True)
@@ -14,7 +14,7 @@ class Conv_ReLU_Block(nn.Module):
 
 
 class Residual_Block(nn.Module):
-    def __init__(self, Cn=num_features, ksize=3):
+    def __init__(self, Cn=64, ksize=3):
         super(Residual_Block, self).__init__()
         self.conv = self.make_layer(Conv_ReLU_Block, conv_num=1, cn=Cn)
         self.ouput = nn.Conv2d(in_channels=Cn, out_channels=Cn, kernel_size=ksize, stride=1, padding=int((ksize - 1) / 2), bias=False)
@@ -35,7 +35,7 @@ class Residual_Block(nn.Module):
 
 
 class Representation(nn.Module):
-    def __init__(self, inFeat=3, nFeat=num_features, layers=3, outChn=5):
+    def __init__(self, inFeat=3, nFeat=64, layers=3, outChn=5):
         super(Representation, self).__init__()
         self.input = nn.Conv2d(in_channels=inFeat, out_channels=nFeat, kernel_size=3, stride=1, padding=1, bias=False)
         # self.conv2 = self.make_layer(Residual_Block, conv_num=layers, cn=nFeat)
@@ -69,7 +69,7 @@ class Representation(nn.Module):
 
 
 class Atom(nn.Module):
-    def __init__(self, inChn=num_features, nFeat=num_features, outChn=3, layers=3, ksize=3):
+    def __init__(self, inChn=64, nFeat=64, outChn=3, layers=3, ksize=3):
         super(Atom, self).__init__()
         self.input = nn.Conv2d(inChn, nFeat, kernel_size=ksize, padding=int((ksize - 1) / 2), bias=True)
         self.map = self.make_layer(Conv_ReLU_Block, conv_num=layers-2, cn=nFeat, ksize=ksize)
@@ -90,7 +90,7 @@ class Atom(nn.Module):
 
 
 class Dictionary(nn.Module):
-    def __init__(self, inChn=num_features, nFeat=num_features, outChn=3, layers=3, bNum=5):
+    def __init__(self, inChn=64, nFeat=64, outChn=3, layers=3, bNum=5):
         super(Dictionary, self).__init__()
         self.base = nn.ModuleList([Atom(inChn=inChn, nFeat=nFeat, outChn=outChn, layers=layers, ksize=3)])
         for i in range(bNum - 1):
@@ -108,7 +108,7 @@ class Dictionary(nn.Module):
         return out
 
 
-class FMNet(nn.Module):  ## set14 : [s=2, 33.22], [s=4, 28.14]
+class FMNet(nn.Module):
     def __init__(self, init=True, bNum=3, nblocks=4, input_features=31, num_features=64, out_features=3):
         super(FMNet, self).__init__()
         self.input = nn.Conv2d(in_channels=input_features, out_channels=num_features, kernel_size=3, stride=1, padding=1, bias=False)

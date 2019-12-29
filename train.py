@@ -16,7 +16,7 @@ def train(model, criterion, optimizer, train_loader, epoch, writer):
         optimizer.step()
         
         if i % 10 == 0:
-            psnr = batch_PSNR(real_hyper, fake_hyper)
+            psnr = batch_PSNR(real_hyper, fake_hyper.detach())
             print("[epoch {}][{}/{}] psnr: {}".format(epoch, i, len(train_loader), psnr.item()))
             writer.add_scalar('train_psnr', psnr.item(), train_times_per_epoch*epoch + i)
 

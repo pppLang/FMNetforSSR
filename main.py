@@ -14,12 +14,12 @@ import time
 parser = argparse.ArgumentParser(description="SpectralSR")
 parser.add_argument("--lr", type=float, default=1e-4, help="initial learning rate")
 parser.add_argument("--batchSize_per_gpu", type=int, default=64, help="batch size")
-parser.add_argument("--milestones", type=int, default=20, help="how many epoch to reduce the lr")
-parser.add_argument("--gamma", type=int, default=0.2, help="how much to reduce the lr each time")
+parser.add_argument("--milestones", type=list, default=list(range(20, 100, 20)), help="how many epoch to reduce the lr")
+parser.add_argument("--gamma", type=int, default=0.5, help="how much to reduce the lr each time")
 parser.add_argument("--epochs", type=int, default=100, help="number of epochs")
-parser.add_argument("--opt.bNum", type=int, default=3, help='path log files')
-parser.add_argument("--opt.nblocks", type=int, default=2, help='path log files')
-parser.add_argument("--gpus", type=str, default="3,4,5", help='path log files')
+parser.add_argument("--bNum", type=int, default=3, help='path log files')
+parser.add_argument("--nblocks", type=int, default=2, help='path log files')
+parser.add_argument("--gpus", type=str, default="0,2,6", help='path log files')
 opt = parser.parse_args()
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -66,6 +66,7 @@ def main():
         
         train(model, criterion, optimizer, train_loader, epoch, writer)
         lr_scheduler.step()
+        train_dataset.shuffle()
 
         test(model, test_dataset, epoch, writer)
 
